@@ -23,12 +23,16 @@ import {RouterOutlet} from '@angular/router';
       <button class="cell" (click)="play(2,1)">{{ displaySymbolByPlayer(grid[2][1]) }}</button>
       <button class="cell" (click)="play(2,2)">{{ displaySymbolByPlayer(grid[2][2]) }}</button>
     </div>
+    @if (winner) {
+      <button class="new" (click)="startNewGame()"><span>Nouvelle partie</span></button>
+    } @else {
+      <button class="restart" (click)="startNewGame()"><span>Recommencer</span></button>
+    }
     @if (hasError) {
       <p class="forbidden">Coup interdit !</p>
     }
     @if (winner) {
       <p class="winner">Le joueur {{ winner }} a gagné !!!</p>
-      <button class="new" (click)="startNewGame()"><span>Nouvelle partie</span></button>
     }
 
   `,
@@ -43,17 +47,23 @@ import {RouterOutlet} from '@angular/router';
       display: flex;
     }
 
-    button:not(.new) {
+    button.cell {
       width: 50px;
       height: 50px;
     }
 
-    button.new {
+    button.new, button.restart {
       padding: 20px;
       background: bisque;
       border: none;
       border-radius: 5px;
       box-shadow: 2px 2px 5px 1px dimgrey;
+      font-weight: bolder;
+      margin-top: 1rem;
+    }
+
+    button.restart {
+      background: cadetblue;
     }
 
     .forbidden {
