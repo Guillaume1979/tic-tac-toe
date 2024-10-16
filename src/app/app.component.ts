@@ -28,6 +28,9 @@ import {RouterOutlet} from '@angular/router';
     } @else {
       <button class="restart" (click)="startNewGame()"><span>Recommencer</span></button>
     }
+    @if (gameIsFinished) {
+      <p class="winner">La partie est finie et personne n'a gagné</p>
+    }
     @if (hasError) {
       <p class="forbidden">Coup interdit !</p>
     }
@@ -76,6 +79,7 @@ import {RouterOutlet} from '@angular/router';
       color: green;
       font-size: 5rem;
       font-weight: bold;
+      text-align: center;
     }
   `],
 })
@@ -85,9 +89,12 @@ export class AppComponent {
   grid: number [][] = [[0, 0, 0], [0, 0, 0], [0, 0, 0]];
   hasError = false
   winner = 0;
+  gameIsFinished = false;
 
   play(x: number, y: number) {
     if (this.winner) return;
+    if (this.gameIsFinished) return;
+
     const player = this.activePlayer;
     if (this.grid[x][y] !== 0) {
       this.displayError();
@@ -99,11 +106,15 @@ export class AppComponent {
       this.hasWon(winner);
       return;
     }
+    if (!this.winner && this.gridIsComplete()) {
+      this.gameIsFinished = true;
+    }
     this.activePlayer = this.activePlayer === 1 ? 2 : 1;
   }
 
   startNewGame() {
     this.winner = 0;
+    this.gameIsFinished = false;
     this.activePlayer = 1;
     this.grid = [[0, 0, 0], [0, 0, 0], [0, 0, 0]];
   }
@@ -146,6 +157,10 @@ export class AppComponent {
   private hasWon(player: number) {
     this.winner = player;
   }
-}
 
-//todo ajouter un restart au cours d'une partie et une fin quand personne ne gagne
+  private gridIsComplete() {
+    return !this.grid.some((line) =>
+      line.some((cell) => cell === 0)
+    );
+  }
+}
